@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ข้อความเฉียงแบบอิฐ (พื้นหลังโปร่งใส)</title>
+  <title>ข้อความเฉียงแบบอิฐ (เลือกสี & ฟอนต์)</title>
+
+  <!-- ✅ โหลดฟอนต์จาก Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun&family=Kanit&family=Mitr&family=Prompt&family=Noto+Sans+Thai&family=Roboto&family=Montserrat&family=Lobster&family=Open+Sans&family=Playfair+Display&display=swap" rel="stylesheet">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
@@ -12,7 +16,7 @@
       background: #fff;
     }
 
-    input, button {
+    input, select, button {
       font-size: 18px;
       padding: 10px;
       margin: 5px 5px 15px 0;
@@ -50,14 +54,13 @@
       user-select: none;
       pointer-events: none;
       opacity: 1;
-      background: transparent; /* ✅ โปร่งใส */
+      background: transparent;
       margin-top: 10px;
     }
 
     .pattern-text {
       position: absolute;
       font-size: 20px;
-      color: #000;
       transform: rotate(-30deg);
       white-space: nowrap;
     }
@@ -65,9 +68,27 @@
 </head>
 <body>
 
-  <h2>ข้อความเฉียงเรียงสลับแบบอิฐ (PNG โปร่งใส):</h2>
-  <input type="text" id="textInput" placeholder="พิมพ์ข้อความที่นี่...">
-  <br>
+  <h2>ข้อความเฉียงแบบอิฐ (เลือกสี & ฟอนต์):</h2>
+  <input type="text" id="textInput" placeholder="พิมพ์ข้อความที่นี่..."><br>
+
+  <label>เลือกสีตัวอักษร: </label>
+  <input type="color" id="colorPicker" value="#000000">
+  <label><input type="checkbox" id="randomPastel"> ใช้สีสุ่มพาสเทล</label><br>
+
+  <label>เลือกฟอนต์: </label>
+  <select id="fontSelect">
+    <option value="Sarabun">Sarabun (ไทย)</option>
+    <option value="Kanit">Kanit (ไทย)</option>
+    <option value="Mitr">Mitr (ไทย)</option>
+    <option value="Prompt">Prompt (ไทย)</option>
+    <option value="Noto Sans Thai">Noto Sans Thai (ไทย)</option>
+    <option value="Roboto">Roboto (อังกฤษ)</option>
+    <option value="Montserrat">Montserrat (อังกฤษ)</option>
+    <option value="Lobster">Lobster (อังกฤษ)</option>
+    <option value="Open Sans">Open Sans (อังกฤษ)</option>
+    <option value="Playfair Display">Playfair Display (อังกฤษ)</option>
+  </select><br>
+
   <button id="generateBtn">ตกลง ✅</button>
   <button id="clearBtn">ลบ ❌</button>
   <button id="saveBtn">บันทึกเป็น PNG 📸</button>
@@ -79,7 +100,15 @@
     const generateBtn = document.getElementById("generateBtn");
     const clearBtn = document.getElementById("clearBtn");
     const saveBtn = document.getElementById("saveBtn");
+    const colorPicker = document.getElementById("colorPicker");
+    const randomPastel = document.getElementById("randomPastel");
+    const fontSelect = document.getElementById("fontSelect");
     const result = document.getElementById("result");
+
+    function getRandomPastel() {
+      const hue = Math.floor(Math.random() * 360);
+      return `hsl(${hue}, 70%, 85%)`;
+    }
 
     generateBtn.addEventListener("click", () => {
       const text = textInput.value.trim();
@@ -91,6 +120,7 @@
       const spacingX = 100;
       const spacingY = 50;
       const offsetX = spacingX / 2;
+      const selectedFont = fontSelect.value;
 
       const areaWidth = result.clientWidth;
       const areaHeight = result.clientHeight;
@@ -104,6 +134,8 @@
           span.textContent = text;
           span.style.left = `${x + shiftX}px`;
           span.style.top = `${y}px`;
+          span.style.color = randomPastel.checked ? getRandomPastel() : colorPicker.value;
+          span.style.fontFamily = `'${selectedFont}', sans-serif`;
           result.appendChild(span);
         }
         row++;
@@ -119,7 +151,7 @@
       html2canvas(result, {
         allowTaint: true,
         useCORS: true,
-        backgroundColor: null // ✅ PNG โปร่งใส
+        backgroundColor: null
       }).then(canvas => {
         canvas.toBlob(function(blob) {
           const link = document.createElement("a");
