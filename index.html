@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ข้อความเฉียงแบบอิฐ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #fff;
+    }
+
+    input, button {
+      font-size: 18px;
+      padding: 10px;
+      margin: 5px 5px 15px 0;
+      border-radius: 5px;
+    }
+
+    input[type="text"] {
+      width: calc(100% - 22px);
+    }
+
+    #generateBtn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+    }
+
+    #clearBtn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+    }
+
+    #saveBtn {
+      background-color: #ff9800;
+      color: white;
+      border: none;
+      display: none;
+    }
+
+    #result {
+      position: relative;
+      width: 100%;
+      height: 80vh;
+      border: 1px dashed #ccc;
+      overflow: hidden;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.4;
+      margin-top: 10px;
+    }
+
+    .pattern-text {
+      position: absolute;
+      font-size: 20px;
+      color: #000;
+      transform: rotate(-30deg);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>ข้อความเฉียงเรียงสลับแบบอิฐ:</h2>
+  <input type="text" id="textInput" placeholder="พิมพ์ข้อความที่นี่...">
+  <br>
+  <button id="generateBtn">ตกลง ✅</button>
+  <button id="clearBtn">ลบ ❌</button>
+  <button id="saveBtn">บันทึกเป็น PNG 📸</button>
+
+  <div id="result"></div>
+
+  <script>
+    const textInput = document.getElementById("textInput");
+    const generateBtn = document.getElementById("generateBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const result = document.getElementById("result");
+
+    generateBtn.addEventListener("click", () => {
+      const text = textInput.value.trim();
+      if (!text) return;
+
+      result.innerHTML = "";
+      saveBtn.style.display = "inline-block";
+
+      const spacingX = 100;
+      const spacingY = 50;
+      const offsetX = spacingX / 2;
+
+      const areaWidth = result.clientWidth;
+      const areaHeight = result.clientHeight;
+
+      let row = 0;
+      for (let y = 0; y < areaHeight + spacingY; y += spacingY) {
+        const shiftX = (row % 2 === 0) ? 0 : offsetX;
+        for (let x = -100; x < areaWidth + 100; x += spacingX) {
+          const span = document.createElement("div");
+          span.className = "pattern-text";
+          span.textContent = text;
+          span.style.left = `${x + shiftX}px`;
+          span.style.top = `${y}px`;
+          result.appendChild(span);
+        }
+        row++;
+      }
+    });
+
+    clearBtn.addEventListener("click", () => {
+      result.innerHTML = "";
+      saveBtn.style.display = "none";
+    });
+
+    saveBtn.addEventListener("click", () => {
+      html2canvas(result).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'ข้อความเฉียงอิฐ.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+  </script>
+
+</body>
+</html>
